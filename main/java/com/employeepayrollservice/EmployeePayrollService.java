@@ -6,7 +6,7 @@ public class EmployeePayrollService
 public EmployeePayrollJDBCService employeePayrollDBService;
 private List<EmployeePayrollData> employeePayrollList;
 	public EmployeePayrollService() {
-		this.employeePayrollDBService = new EmployeePayrollJDBCService();
+		this.employeePayrollDBService = EmployeePayrollJDBCService.getInstance();
 	}
 	
 	public List<EmployeePayrollData> readEmployeePayrollData() throws EmployeePayrollJDBCException{
@@ -15,7 +15,7 @@ private List<EmployeePayrollData> employeePayrollList;
 	}
 	public void updateEmployeeSalary(String name,double salary) throws EmployeePayrollJDBCException
 	{
-		int result=new EmployeePayrollJDBCService().updateEmployeeDataUsingStatement(name,salary);
+		int result=new EmployeePayrollJDBCService().updateEmployeePayrollDataUsingPreparedStatement(name,salary);
 		if(result==0)
 			return;
 		EmployeePayrollData employeePayrollData=this.getEmployeePayrollData(name);

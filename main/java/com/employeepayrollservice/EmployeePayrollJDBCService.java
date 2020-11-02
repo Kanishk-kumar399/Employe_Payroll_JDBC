@@ -12,6 +12,17 @@ import java.util.List;
 
 public class EmployeePayrollJDBCService 
 {
+	private static EmployeePayrollJDBCService employeePayrollDBService;
+	private PreparedStatement preparedStatement;
+	public EmployeePayrollJDBCService() {}
+
+	public static EmployeePayrollJDBCService getInstance() {
+		if(employeePayrollDBService==null) {
+			employeePayrollDBService=new EmployeePayrollJDBCService();
+		}
+		return employeePayrollDBService;
+	}
+
 	public Connection getConnection() throws EmployeePayrollJDBCException {
 		String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service?useSSL=false";
 		String user = "root";
@@ -60,6 +71,29 @@ public class EmployeePayrollJDBCService
 		}
 	}
 
+	public int updateEmployeePayrollDataUsingPreparedStatement(String name, double salary) throws EmployeePayrollJDBCException {
+		if(this.preparedStatement==null) {
+			this.prepareStatementForEmployeePayroll();
+		}
+		try {
+			preparedStatement.setDouble(1, salary);
+			preparedStatement.setString(2, name);
+			int rowsAffected=preparedStatement.executeUpdate();
+			return rowsAffected;
+		}catch(SQLException e) {
+			throw new EmployeePayrollJDBCException("Unable to use prepared statement");
+		}
+	}
+
+	private void prepareStatementForEmployeePayroll() throws EmployeePayrollJDBCException {
+		try {
+			Connection connection=this.getConnection();
+			String sql="update employee_payroll set salary=? where name=?";
+			this.preparedStatement=connection.prepareStatement(sql);
+		}catch (SQLException e) {
+			throw new EmployeePayrollJDBCException("Unable to prepare statement");
+		}
+	}
 	public List<EmployeePayrollData> getEmployeePayrollDataFromDB(String name) throws EmployeePayrollJDBCException 
 	{
 			String sql=String.format("select * from employee_payroll where name='%s'",name);
