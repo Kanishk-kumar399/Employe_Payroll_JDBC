@@ -112,7 +112,7 @@ public class EmployeePayrollJDBCService
 			ResultSet resultSet = employeePayrollDataStatement.executeQuery();
 			return this.getEmployeePayrollListFromResultset(resultSet);
 		} catch (SQLException e) {
-			throw new EmployeePayrollJDBCException("Unable to read data");
+			throw new EmployeePayrollJDBCException("Unable to read");
 		}
 	}
 	private void prepareStatementForEmployeePayrollDataRetrieval() throws EmployeePayrollJDBCException {
@@ -122,6 +122,18 @@ public class EmployeePayrollJDBCService
 			this.employeePayrollDataStatement = connection.prepareStatement(sql);
 		} catch (SQLException e) {
 			throw new EmployeePayrollJDBCException("Unable to create prepare statement");
+		}
+	}
+	public List<EmployeePayrollData> getEmployeePayrollDataByStartingDate(LocalDate startDate, LocalDate endDate)
+			throws EmployeePayrollJDBCException {
+		String sql = String.format("select * from employee_payroll where start between cast('%s' as date) and cast('%s' as date);",
+				startDate.toString(), endDate.toString());
+		try (Connection connection = this.getConnection()) {
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
+			return this.getEmployeePayrollListFromResultset(resultSet);
+		} catch (SQLException e) {
+			throw new EmployeePayrollJDBCException("Connection Failed.");
 		}
 	}
 }
