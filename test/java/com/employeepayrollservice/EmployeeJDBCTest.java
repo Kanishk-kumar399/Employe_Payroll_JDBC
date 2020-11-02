@@ -2,6 +2,7 @@ package com.employeepayrollservice;
 
 import static org.junit.Assert.assertTrue;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.Assert;
@@ -45,4 +46,15 @@ public class EmployeeJDBCTest
 		boolean result=employeePayrollService.checkEmployeePayrollInSyncWithDB("Terisa");
 		Assert.assertTrue(result);
     }
+    @Test
+    //UC5
+    public void givenEmployeePayrollDataWhenRetrievedBasedOnStartDateShouldReturnProperResult() throws EmployeePayrollJDBCException {
+			EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+			employeePayrollService.readEmployeePayrollData();
+			LocalDate startDate = LocalDate.parse("2018-01-31");
+			LocalDate endDate = LocalDate.parse("2019-01-31");
+			List<EmployeePayrollData> matchingRecords = employeePayrollService
+					.getEmployeePayrollDataByStartDate(startDate, endDate);
+			Assert.assertEquals(matchingRecords.get(0),employeePayrollService.getEmployeePayrollData("Terisa"));
+	}
 }

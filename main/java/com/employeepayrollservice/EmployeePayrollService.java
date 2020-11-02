@@ -1,4 +1,5 @@
 package com.employeepayrollservice;
+import java.time.LocalDate;
 import java.util.List;
 
 public class EmployeePayrollService
@@ -22,7 +23,7 @@ private List<EmployeePayrollData> employeePayrollList;
 		if(employeePayrollData !=null) employeePayrollData.setSalary(salary);
 	}
 
-	private EmployeePayrollData getEmployeePayrollData(String name) {
+	public EmployeePayrollData getEmployeePayrollData(String name) {
 		return this.employeePayrollList.stream()
 				.filter(employeePayrollObject->employeePayrollObject.getName().equals(name))
 				.findFirst().orElse(null);
@@ -31,5 +32,8 @@ private List<EmployeePayrollData> employeePayrollList;
 	public boolean checkEmployeePayrollInSyncWithDB(String name) throws EmployeePayrollJDBCException {
 		List<EmployeePayrollData> employeePayrollDataList=new EmployeePayrollJDBCService().getEmployeePayrollDataFromDB(name);
 		return employeePayrollDataList.get(0).equals(getEmployeePayrollData(name));
+	}
+	public List<EmployeePayrollData> getEmployeePayrollDataByStartDate(LocalDate startDate, LocalDate endDate)throws EmployeePayrollJDBCException {
+		return this.employeePayrollDBService.getEmployeePayrollDataByStartingDate(startDate, endDate);
 	}
 }
