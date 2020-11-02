@@ -8,7 +8,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EmployeePayrollJDBCService 
 {
@@ -135,5 +137,22 @@ public class EmployeePayrollJDBCService
 		} catch (SQLException e) {
 			throw new EmployeePayrollJDBCException("Connection Failed.");
 		}
+	}
+
+	public Map<String, Double> performVariousOperations(String column, String operation) throws EmployeePayrollJDBCException{
+		String sql=String.format("select gender , %s(%s) from employee_payroll group by gender;" , operation , column);
+		Map<String,Double> mapValues = new HashMap<>();
+		try(Connection connection = this.getConnection()) {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while(resultSet.next())
+			{
+				mapValues.put(resultSet.getString(1), resultSet.getDouble(2));
+			}
+		}
+		catch (SQLException e) {
+			throw new EmployeePayrollJDBCException("Connection Failed.");
+		}
+		return mapValues;
 	}
 }

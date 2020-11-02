@@ -1,6 +1,7 @@
 package com.employeepayrollservice;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public class EmployeePayrollService
 {
@@ -36,5 +37,9 @@ private List<EmployeePayrollData> employeePayrollList;
 	}
 	public List<EmployeePayrollData> getEmployeePayrollDataByStartDate(LocalDate startDate, LocalDate endDate)throws EmployeePayrollJDBCException {
 		return this.employeePayrollDBService.getEmployeePayrollDataByStartingDate(startDate, endDate);
+	}
+
+	public Map<String, Double> performOperationByGender(String column,String operation) throws EmployeePayrollJDBCException {
+		return this.employeePayrollDBService.performVariousOperations(column,operation);
 	}
 }
