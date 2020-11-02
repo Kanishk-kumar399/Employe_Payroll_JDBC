@@ -46,7 +46,38 @@ public class EmployeePayrollJDBCService
 		} catch (SQLException e) {
 			throw new EmployeePayrollJDBCException("Unable to get data.Please check table");
 		}
+	
+	return employeePayrollList;
+	}
+	public int updateEmployeeDataUsingStatement(String name, double salary) throws EmployeePayrollJDBCException {
+		String sql=String.format("update employee_payroll set salary=%.2f where name='%s'",salary,name);
+		try (Connection connection=this.getConnection()){
+			Statement statement=connection.createStatement();
+			int rowsAffected=statement.executeUpdate(sql);
+			return rowsAffected;
+		} catch (SQLException e) {
+			throw new EmployeePayrollJDBCException("Unable To update data in database");
+		}
+	}
 
-		return employeePayrollList;
+	public List<EmployeePayrollData> getEmployeePayrollDataFromDB(String name) throws EmployeePayrollJDBCException 
+	{
+			String sql=String.format("select * from employee_payroll where name='%s'",name);
+			List<EmployeePayrollData> employeePayrollList=new ArrayList<EmployeePayrollData>();
+			try (Connection connection=this.getConnection()){
+				Statement statement=connection.createStatement();
+				ResultSet resultSet=statement.executeQuery(sql);
+				while(resultSet.next()) {
+					int id=resultSet.getInt("id");
+					String objectname=resultSet.getString("name");
+					String gender=resultSet.getString("gender");
+					double salary=resultSet.getDouble("salary");
+					LocalDate start=resultSet.getDate("start").toLocalDate();
+					employeePayrollList.add(new EmployeePayrollData(id, objectname, salary, gender, start));
+				}
+				return employeePayrollList;
+			} catch (SQLException e) {
+				throw new EmployeePayrollJDBCException("Unable to get data from database");
+			}
 	}
 }

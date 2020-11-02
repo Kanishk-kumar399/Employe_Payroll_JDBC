@@ -1,14 +1,35 @@
 package com.employeepayrollservice;
 import java.util.List;
 
-public class EmployeePayrollService {
+public class EmployeePayrollService
+{
 public EmployeePayrollJDBCService employeePayrollDBService;
-	
+private List<EmployeePayrollData> employeePayrollList;
 	public EmployeePayrollService() {
 		this.employeePayrollDBService = new EmployeePayrollJDBCService();
 	}
 	
 	public List<EmployeePayrollData> readEmployeePayrollData() throws EmployeePayrollJDBCException{
-		return this.employeePayrollDBService.readData();
+		this.employeePayrollList = this.employeePayrollDBService.readData();
+		return this.employeePayrollList;
+	}
+	public void updateEmployeeSalary(String name,double salary) throws EmployeePayrollJDBCException
+	{
+		int result=new EmployeePayrollJDBCService().updateEmployeeDataUsingStatement(name,salary);
+		if(result==0)
+			return;
+		EmployeePayrollData employeePayrollData=this.getEmployeePayrollData(name);
+		if(employeePayrollData !=null) employeePayrollData.setSalary(salary);
+	}
+
+	private EmployeePayrollData getEmployeePayrollData(String name) {
+		return this.employeePayrollList.stream()
+				.filter(employeePayrollObject->employeePayrollObject.getName().equals(name))
+				.findFirst().orElse(null);
+	}
+
+	public boolean checkEmployeePayrollInSyncWithDB(String name) throws EmployeePayrollJDBCException {
+		List<EmployeePayrollData> employeePayrollDataList=new EmployeePayrollJDBCService().getEmployeePayrollDataFromDB(name);
+		return employeePayrollDataList.get(0).equals(getEmployeePayrollData(name));
 	}
 }
