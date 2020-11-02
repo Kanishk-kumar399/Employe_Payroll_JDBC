@@ -19,7 +19,8 @@ private List<EmployeePayrollData> employeePayrollList;
 		if(result==0)
 			return;
 		EmployeePayrollData employeePayrollData=this.getEmployeePayrollData(name);
-		if(employeePayrollData !=null) employeePayrollData.setSalary(salary);
+		if(employeePayrollData !=null)
+			employeePayrollData.setSalary(salary);
 	}
 
 	private EmployeePayrollData getEmployeePayrollData(String name) {
