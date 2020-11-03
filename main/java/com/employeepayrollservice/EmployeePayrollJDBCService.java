@@ -182,6 +182,7 @@ public class EmployeePayrollJDBCService
 		try
 		{
 			connection=this.getConnection();
+			connection.setAutoCommit(false);
 		}
 		catch (Exception e) {
 			throw new EmployeePayrollJDBCException("Error");
@@ -198,7 +199,13 @@ public class EmployeePayrollJDBCService
 			employeePayrollData=new EmployeePayrollData(employeeId, name, salary, gender, startdate);
 		}
 		catch (SQLException e) {
-			throw new EmployeePayrollJDBCException("Could Not Add");}
+			try {
+				connection.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			throw new EmployeePayrollJDBCException("Could Not Add");
+		}
 		try(Statement statement=connection.createStatement())
 		{
 			double deductions=salary*0.2;
@@ -210,8 +217,28 @@ public class EmployeePayrollJDBCService
 			int rowsAffected=statement.executeUpdate(sql);
 			if(rowsAffected==1)
 				employeePayrollData=new EmployeePayrollData(employeeId, name, salary, gender, startdate);
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) 
+		{
+			try {
+				connection.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 			throw new EmployeePayrollJDBCException("Not Able to add");
+		}
+		try {
+		connection.commit();
+		}
+		catch (SQLException e1) {
+			e1.printStackTrace();}
+		finally {
+			if(connection!=null)
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 		}
 		return employeePayrollData;
 	}
