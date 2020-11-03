@@ -42,4 +42,8 @@ private List<EmployeePayrollData> employeePayrollList;
 	public Map<String, Double> performOperationByGender(String column,String operation) throws EmployeePayrollJDBCException {
 		return this.employeePayrollDBService.performVariousOperations(column,operation);
 	}
+
+	public void addEmployeeToPayroll(String name, double salary, LocalDate startdate, String gender) throws EmployeePayrollJDBCException {
+		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name,salary,startdate,gender));
+	}
 }

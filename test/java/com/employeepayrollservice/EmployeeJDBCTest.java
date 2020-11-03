@@ -66,5 +66,14 @@ public class EmployeeJDBCTest
 		employeePayrollService.readEmployeePayrollData();
 		Map<String, Double> averageSalaryByGender=employeePayrollService.performOperationByGender("salary","MAX");
 		assertEquals(300000.0,averageSalaryByGender.get("F"), 0.0);
-}
+    }
+    //UC7
+    @Test
+    public void givenNewEmployee_WhenAdded_ShouldGiveProperResult() throws EmployeePayrollJDBCException {
+		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+		employeePayrollService.readEmployeePayrollData();
+		employeePayrollService.addEmployeeToPayroll("Mark",500000.00,LocalDate.now(),"M");
+		boolean result=employeePayrollService.checkEmployeePayrollInSyncWithDB("Mark");
+		Assert.assertTrue(result);
+    }
 }
