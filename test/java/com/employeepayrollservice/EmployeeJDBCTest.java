@@ -33,7 +33,7 @@ public class EmployeeJDBCTest
     	List<EmployeePayrollData> employeePayrollData;
     	EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 		employeePayrollData =employeePayrollService.readEmployeePayrollData();
-		employeePayrollService.updateEmployeeSalary("Terisa",300000.00);
+		employeePayrollService.updateEmployeeSalary("Terisa",30000000.00);
 		boolean result=employeePayrollService.checkEmployeePayrollInSyncWithDB("Terisa");
 		Assert.assertTrue(result);
     }
@@ -67,12 +67,12 @@ public class EmployeeJDBCTest
 		Map<String, Double> averageSalaryByGender=employeePayrollService.performOperationByGender("salary","MAX");
 		assertEquals(300000.0,averageSalaryByGender.get("F"), 0.0);
     }
-    //UC7
+    //UC7 and UC8
     @Test
     public void givenNewEmployee_WhenAdded_ShouldGiveProperResult() throws EmployeePayrollJDBCException {
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 		employeePayrollService.readEmployeePayrollData();
-		employeePayrollService.addEmployeeToPayroll("Mark",500000.00,LocalDate.now(),"M");
+		employeePayrollService.addEmployeeToPayroll("Mark",50000000.00,LocalDate.now(),"M");
 		boolean result=employeePayrollService.checkEmployeePayrollInSyncWithDB("Mark");
 		Assert.assertTrue(result);
     }
