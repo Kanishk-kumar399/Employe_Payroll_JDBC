@@ -56,4 +56,9 @@ private List<EmployeePayrollData> employeePayrollList;
 		return EmployeePayrollJDBCService.getInstance().addNewEmployee
 								(id, name, gender, phone_no, address, date, salary, comp_name, comp_id, department, dept_id);
 	}
+	public void removeEmployee(String name) throws EmployeePayrollJDBCException {
+		if (!this.checkEmployeePayrollInSyncWithDB(name))
+			throw new EmployeePayrollJDBCException("employee absent");
+		EmployeePayrollJDBCService.getInstance().removeEmployee(name);
+	}
 }

@@ -1,6 +1,7 @@
 package com.employeepayrollservice;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Date;
@@ -92,4 +93,12 @@ public class EmployeeJDBCTest
 		boolean results=employeePayrollService.checkEmployeePayrollInSyncWithDB("Kanishk");
 		Assert.assertTrue(results);
     }
+    //UC12
+    @Test
+	public void givenNameWhenDeletedShouldGetDeletedFromDatabase() throws EmployeePayrollJDBCException {
+			EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+			employeePayrollService.removeEmployee("Ram");
+			boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Kanishk");
+			assertFalse(result);
+	}
 }
