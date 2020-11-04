@@ -77,7 +77,7 @@ public class EmployeeJDBCTest
 		boolean result=employeePayrollService.checkEmployeePayrollInSyncWithDB("Mark");
 		Assert.assertTrue(result);
     }
-    //UC9
+    //UC9 and UC10
     @Test
     public void givennewEmployeeDetails_addItInEveryTableShouldGiveProperResult() throws EmployeePayrollJDBCException{
     	EmployeePayrollService employeePayrollService = new EmployeePayrollService();

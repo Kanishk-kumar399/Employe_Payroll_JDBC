@@ -11,8 +11,9 @@ public class EmployeePayrollData
 	private String gender;
 	private String company_name;
 	private String department[];
+	private int department_id[];
 	public EmployeePayrollData(int id, String name, double salary, LocalDate start, String gender, String company_name,
-			String[] department) {
+			String[] department,int[] department_id) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -21,6 +22,7 @@ public class EmployeePayrollData
 		this.gender = gender;
 		this.company_name = company_name;
 		this.department = department;
+		this.department_id=department_id;
 	}
 
 	public EmployeePayrollData(int id, String name, double salary, String gender) {
