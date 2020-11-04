@@ -1,5 +1,6 @@
 package com.employeepayrollservice;
 import java.time.LocalDate;
+import java.util.Arrays;
 
 public class EmployeePayrollData 
 {
@@ -8,6 +9,20 @@ public class EmployeePayrollData
 	private double salary;
 	private LocalDate start;
 	private String gender;
+	private String company_name;
+	private String department[];
+	public EmployeePayrollData(int id, String name, double salary, LocalDate start, String gender, String company_name,
+			String[] department) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.salary = salary;
+		this.start = start;
+		this.gender = gender;
+		this.company_name = company_name;
+		this.department = department;
+	}
+
 	public EmployeePayrollData(int id, String name, double salary, String gender) {
 		this.id = id;
 		this.name = name;
@@ -19,6 +34,12 @@ public class EmployeePayrollData
 		this(id,name,salary,gender);
 		this.start=start;
 	}
+	public EmployeePayrollData(int id, String name, double salary) {
+		this.id = id;
+		this.name = name;
+		this.salary = salary;
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -58,10 +79,12 @@ public class EmployeePayrollData
 	public void setStart(LocalDate start) {
 		this.start = start;
 	}
+	
 	@Override
 	public String toString() {
-		return "EmployeePayrollData [id=" + id + ", name=" + name + ", salary=" + salary + ", startDate=" + start
-				+ "]";
+		return "EmployeePayrollData [id=" + id + ", name=" + name + ", salary=" + salary + ", start=" + start
+				+ ", gender=" + gender + ", company_name=" + company_name + ", department="
+				+ Arrays.toString(department) + "]";
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package com.employeepayrollservice;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +68,7 @@ public class EmployeeJDBCTest
 		Map<String, Double> averageSalaryByGender=employeePayrollService.performOperationByGender("salary","MAX");
 		assertEquals(300000.0,averageSalaryByGender.get("F"), 0.0);
     }
-    //UC7 and UC8
+    //UC7 and UC8 and refactor
     @Test
     public void givenNewEmployee_WhenAdded_ShouldGiveProperResult() throws EmployeePayrollJDBCException {
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
@@ -75,5 +76,20 @@ public class EmployeeJDBCTest
 		employeePayrollService.addEmployeeToPayroll("Mark",50000000.00,LocalDate.now(),"M");
 		boolean result=employeePayrollService.checkEmployeePayrollInSyncWithDB("Mark");
 		Assert.assertTrue(result);
+    }
+    //UC9
+    @Test
+    public void givennewEmployeeDetails_addItInEveryTableShouldGiveProperResult() throws EmployeePayrollJDBCException{
+    	EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+		employeePayrollService.readEmployeePayrollData();
+		Date date = Date.valueOf("2020-11-03");
+		boolean result;
+		String[] departments = {"SalesAndBusiness", "Marketing"};
+		int[] dept_id = {01, 02};
+		EmployeePayrollData employeePayrollData = employeePayrollService.addNewEmployee
+					(1001, "Kanishk", "M", "88845649", "Varnasi 5154985", date, 3000000,
+							"Capgemini", 111, departments, dept_id );
+		boolean results=employeePayrollService.checkEmployeePayrollInSyncWithDB("Kanishk");
+		Assert.assertTrue(results);
     }
 }

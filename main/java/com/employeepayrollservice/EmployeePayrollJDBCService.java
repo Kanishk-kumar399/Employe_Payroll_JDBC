@@ -242,4 +242,80 @@ public class EmployeePayrollJDBCService
 		}
 		return employeePayrollData;
 	}
-}
+		public EmployeePayrollData addNewEmployee(int id, String name, String gender, String phone_no, String address,Date date, double salary, String comp_name, int comp_id, String[] department, int[] dept_id) throws EmployeePayrollJDBCException {
+			int employeeId = 0;
+			EmployeePayrollData employeePayrollData = null;
+			String sql = String.format("insert into employee values (%s,%s,'%s','%s')",id, name,
+					gender,date);
+			Connection connection = null;
+			try {
+				connection =this.getConnection();
+				connection.setAutoCommit(false);
+				Statement statement_employee = connection.createStatement();
+				int rowAffected = statement_employee.executeUpdate(sql, statement_employee.RETURN_GENERATED_KEYS);
+			} catch (SQLException e) {
+				try {
+					connection.rollback();
+				} catch (SQLException e1) {
+					throw new EmployeePayrollJDBCException("Insertion error");
+				}
+				return employeePayrollData;
+			}
+			double deductions = salary * 0.2;
+			double taxable_pay = salary - deductions;
+			double tax = taxable_pay * 0.1;
+			double net_pay = taxable_pay - tax;
+			String sql_salary = String.format("insert into payroll values (%s,%s,%s,%s,%s,%s)", id, salary, deductions,
+					taxable_pay, tax, net_pay);
+			try {
+				Statement statement_salary = connection.createStatement();
+				int rowAffected = statement_salary.executeUpdate(sql_salary, statement_salary.RETURN_GENERATED_KEYS);
+				if (rowAffected == 1) {
+					ResultSet resultSet = statement_salary.getGeneratedKeys();
+					if (resultSet.next())
+						employeeId = resultSet.getInt(2);
+					employeePayrollData = new EmployeePayrollData(employeeId, name, salary);
+				}
+			} catch (SQLException e) {
+				try {
+					connection.rollback();
+				} catch (SQLException e1) {
+					throw new EmployeePayrollJDBCException("Insertion error");
+				}
+			} 
+			try {
+				Statement statement = connection.createStatement();
+				String sql_company = String.format("insert into company values (%s, '%s')", comp_id, comp_name);
+				statement.executeUpdate(sql_company);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try {
+				Statement statement = connection.createStatement();
+				for(int i = 0 ; i < dept_id.length ; i++) {
+					String sql_new= String.format("insert into department values (%s,%s)", id, dept_id[i]);
+					statement.executeUpdate(sql_new);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				try {
+					connection.rollback();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+			try {
+				connection.commit();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}finally {
+				if (connection != null)
+					try {
+						connection.close();
+					} catch (SQLException e) {
+						throw new EmployeePayrollJDBCException("Connection not closed");
+					}
+			}
+			return employeePayrollData;
+		}
+	}
