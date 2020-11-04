@@ -245,13 +245,29 @@ public class EmployeePayrollJDBCService
 		public EmployeePayrollData addNewEmployee(int id, String name, String gender, String phone_no, String address,Date date, double salary, String comp_name, int comp_id, String[] department, int[] dept_id) throws EmployeePayrollJDBCException {
 			int employeeId = 0;
 			EmployeePayrollData employeePayrollData = null;
-			String sql = String.format("insert into employee values (%s,%s,'%s','%s')",id, name,
-					gender,date);
-			Connection connection = null;
+			Connection connection=null;
 			try {
-				connection =this.getConnection();
+				connection = this.getConnection();
 				connection.setAutoCommit(false);
+				Statement statement = connection.createStatement();
+				String sql_forcompany = String.format("insert into company values ('%s', '%s')", comp_id, comp_name);
+				statement.executeUpdate(sql_forcompany);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try {
+				Statement statement = connection.createStatement();
+				for(int i = 0 ; i < dept_id.length ; i++) {
+					String sql_department = String.format("insert into department values ('%s','%s')", dept_id[i], department[i]);
+					statement.executeUpdate(sql_department);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			try {
 				Statement statement_employee = connection.createStatement();
+				String sql = String.format("insert into employee values ('%s','%s','%s','%s')", 
+																		 id, name, gender,date);
 				int rowAffected = statement_employee.executeUpdate(sql, statement_employee.RETURN_GENERATED_KEYS);
 			} catch (SQLException e) {
 				try {
@@ -282,19 +298,12 @@ public class EmployeePayrollJDBCService
 				} catch (SQLException e1) {
 					throw new EmployeePayrollJDBCException("Insertion error");
 				}
-			} 
-			try {
-				Statement statement = connection.createStatement();
-				String sql_company = String.format("insert into company values (%s, '%s')", comp_id, comp_name);
-				statement.executeUpdate(sql_company);
-			} catch (SQLException e) {
-				e.printStackTrace();
 			}
 			try {
 				Statement statement = connection.createStatement();
 				for(int i = 0 ; i < dept_id.length ; i++) {
-					String sql_new= String.format("insert into department values (%s,%s)", id, dept_id[i]);
-					statement.executeUpdate(sql_new);
+					String sql_emp_department = String.format("insert into Employee_Department values (%s,%s)", id, dept_id[i]);
+					statement.executeUpdate(sql_emp_department);
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -304,6 +313,10 @@ public class EmployeePayrollJDBCService
 					e1.printStackTrace();
 				}
 			}
+
+			/**
+			 * committing the changes
+			 */
 			try {
 				connection.commit();
 			} catch (SQLException e) {
