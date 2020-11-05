@@ -48,10 +48,6 @@ private List<EmployeePayrollData> employeePayrollList;
 	public void addEmployeeToPayroll(String name, double salary, LocalDate startdate, String gender) throws EmployeePayrollJDBCException {
 		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name,salary,startdate,gender));
 	}
-	public void addEmployeeToPayrollWithThreads(List<EmployeePayrollData> employeePayrollDataList)
-	{
-		Map<Integer,Boolean> employeeAddditionStatus=new HashMap<>();
-	}
 	public EmployeePayrollData addNewEmployee(int id, String name, String gender, String phone_no, String address,Date date, double salary, String comp_name, int comp_id, String[] department, int[] dept_id) throws EmployeePayrollJDBCException{
 		return EmployeePayrollJDBCService.getInstance().addNewEmployee
 								(id, name, gender, phone_no, address, date, salary, comp_name, comp_id, department, dept_id);
@@ -68,7 +64,6 @@ private List<EmployeePayrollData> employeePayrollList;
 			try {
 				this.addEmployeeToPayroll(employeePayrollData.getName(),employeePayrollData.getSalary(),employeePayrollData.getStart(),employeePayrollData.getGender());
 			} catch (EmployeePayrollJDBCException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			System.out.println("Employee Added:"+employeePayrollData.getName());
@@ -78,5 +73,33 @@ private List<EmployeePayrollData> employeePayrollList;
 
 	public int countEntries() {
 		return employeePayrollList.size();
+	}
+
+	public void addEmployeesToPayrollWithThreads(List<EmployeePayrollData> employeePayrollDataList) {
+		Map<Integer,Boolean> employeeAdditionStatus=new HashMap<Integer,Boolean>();
+		employeePayrollDataList.forEach(employeePayrollData->
+		{
+			Runnable task=()->{
+				employeeAdditionStatus.put(employeePayrollData.hashCode(),false);
+				System.out.println("Employee Being Added:"+Thread.currentThread().getName());
+				try {
+					this.addEmployeeToPayroll(employeePayrollData.getName(),employeePayrollData.getSalary(),employeePayrollData.getStart(),employeePayrollData.getGender());
+				} catch (EmployeePayrollJDBCException e) {
+					e.printStackTrace();
+				}
+				employeeAdditionStatus.put(employeePayrollData.hashCode(),true);
+				System.out.println("Employee Added:"+Thread.currentThread().getName());
+			};
+			Thread thread=new Thread(task,employeePayrollData.getName());
+			thread.start();
+		});
+		while(employeeAdditionStatus.containsValue(false))
+		{
+			try {
+				Thread.sleep(10);
+			}
+			catch(InterruptedException e) {}
+		}
+		System.out.println(this.employeePayrollList);
 	}
 }

@@ -1,6 +1,7 @@
 package com.employeepayrollservice;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class EmployeePayrollData 
 {
@@ -87,6 +88,11 @@ public class EmployeePayrollData
 		return "EmployeePayrollData [id=" + id + ", name=" + name + ", salary=" + salary + ", start=" + start
 				+ ", gender=" + gender + ", company_name=" + company_name + ", department="
 				+ Arrays.toString(department) + "]";
+	}
+	@Override
+	public  int hashCode()
+	{
+		return Objects.hash(name,gender,salary,start);
 	}
 
 	@Override
