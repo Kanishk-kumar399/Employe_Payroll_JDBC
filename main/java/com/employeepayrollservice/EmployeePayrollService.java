@@ -61,4 +61,22 @@ private List<EmployeePayrollData> employeePayrollList;
 			throw new EmployeePayrollJDBCException("employee absent");
 		EmployeePayrollJDBCService.getInstance().removeEmployee(name);
 	}
+
+	public void addEmployeesToPayroll(List<EmployeePayrollData> employeePayrollDataList) throws EmployeePayrollJDBCException{
+		employeePayrollDataList.forEach(employeePayrollData->{
+			System.out.println("Employee Being Added:"+employeePayrollData.getName());
+			try {
+				this.addEmployeeToPayroll(employeePayrollData.getName(),employeePayrollData.getSalary(),employeePayrollData.getStart(),employeePayrollData.getGender());
+			} catch (EmployeePayrollJDBCException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("Employee Added:"+employeePayrollData.getName());
+		});
+		System.out.println(this.employeePayrollList);
+	}
+
+	public int countEntries() {
+		return employeePayrollList.size();
+	}
 }

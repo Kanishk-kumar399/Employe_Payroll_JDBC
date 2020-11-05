@@ -5,12 +5,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Date;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.google.protobuf.Duration;
 
 public class EmployeeJDBCTest
 {
@@ -101,4 +105,23 @@ public class EmployeeJDBCTest
 			boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Kanishk");
 			assertFalse(result);
 	}
+    //UC1
+    @Test
+    public void given6Employeess_WhenAddedToDB_ShouldMatchEmployeeEntries() throws EmployeePayrollJDBCException{
+    	EmployeePayrollData[] aarayOfEmps= {
+    			new EmployeePayrollData(0,"Jeff Bezos", 100000.0, "M", LocalDate.now()),
+    			new EmployeePayrollData(0,"Bill Gates", 1500000.0, "M", LocalDate.now()),
+    			new EmployeePayrollData(0,"Mark Zuckerberg", 1200000.0, "M", LocalDate.now()),
+    			new EmployeePayrollData(0,"Suresh", 900000.0, "M", LocalDate.now()),
+    			new EmployeePayrollData(0,"Mukesh", 700000.0, "M", LocalDate.now()),
+    			new EmployeePayrollData(0,"Anil", 800000.0, "M", LocalDate.now()),
+    	};
+    	EmployeePayrollService employeePayrollService=new EmployeePayrollService();
+    	employeePayrollService.readEmployeePayrollData();
+    	Instant start=Instant.now();
+    	employeePayrollService.addEmployeesToPayroll(Arrays.asList(aarayOfEmps));
+    	Instant end=Instant.now();
+    	System.out.println("Duration Without Thread:"+java.time.Duration.between(start, end));
+    	Assert.assertEquals(10,employeePayrollService.countEntries());
+    }
 }
