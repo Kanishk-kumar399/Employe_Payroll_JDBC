@@ -126,6 +126,8 @@ public class EmployeeJDBCTest
     	employeePayrollService.addEmployeesToPayrollWithThreads(Arrays.asList(aarayOfEmps));
     	Instant endThread=Instant.now();
     	System.out.println("Duration With Thread:"+java.time.Duration.between(startThread, endThread));
-    	Assert.assertEquals(7,employeePayrollService.countEntries());
+    	Assert.assertEquals(13,employeePayrollService.countEntries());
     }
+    //UC3
+    
 }

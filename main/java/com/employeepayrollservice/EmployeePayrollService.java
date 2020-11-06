@@ -46,7 +46,7 @@ private List<EmployeePayrollData> employeePayrollList;
 	}
 
 	public void addEmployeeToPayroll(String name, double salary, LocalDate startdate, String gender) throws EmployeePayrollJDBCException {
-		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name,salary,startdate,gender));
+		employeePayrollDBService.addEmployeeToPayroll(name,salary,startdate,gender);
 	}
 	public EmployeePayrollData addNewEmployee(int id, String name, String gender, String phone_no, String address,Date date, double salary, String comp_name, int comp_id, String[] department, int[] dept_id) throws EmployeePayrollJDBCException{
 		return EmployeePayrollJDBCService.getInstance().addNewEmployee

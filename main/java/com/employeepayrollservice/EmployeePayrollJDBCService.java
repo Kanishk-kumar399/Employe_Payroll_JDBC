@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 public class EmployeePayrollJDBCService {
+	private int connectionCounter=0;
 	private static EmployeePayrollJDBCService employeePayrollDBService;
 	private PreparedStatement preparedStatementForUpdation;
 	private PreparedStatement employeePayrollDataStatement;
@@ -28,19 +29,20 @@ public class EmployeePayrollJDBCService {
 		return employeePayrollDBService;
 	}
 
-	public Connection getConnection() throws EmployeePayrollJDBCException {
+	public synchronized Connection getConnection() throws EmployeePayrollJDBCException {
+		connectionCounter++;
 		String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service?useSSL=false";
 		String user = "root";
 		String password = "Kanishk111*";
 		Connection connection;
-		System.out.println("Connecting to database: " + jdbcURL);
+		System.out.println("processing thread! "+Thread.currentThread().getName()+"Connecting to database with Id: " + connectionCounter);
 		try {
 			connection = DriverManager.getConnection(jdbcURL, user, password);
-			System.out.println("Connection is SuccessFull!!! " + connection);
-			return connection;
+			System.out.println("Processing Thread!:"+Thread.currentThread().getName()+"ID:"+connectionCounter+"Connection is SuccessFull!!! " + connection);
 		} catch (SQLException e) {
 			throw new EmployeePayrollJDBCException("Unable to establish the connection");
 		}
+		return connection;
 	}
 
 	public List<EmployeePayrollData> readData() throws EmployeePayrollJDBCException {
