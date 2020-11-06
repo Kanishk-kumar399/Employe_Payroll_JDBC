@@ -105,7 +105,7 @@ public class EmployeeJDBCTest
 			boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Kanishk");
 			assertFalse(result);
 	}
-    //UC1 and UC2
+    //UC1 and UC2 and UC3 and UC4
     @Test
     public void given6Employeess_WhenAddedToDB_ShouldMatchEmployeeEntries() throws EmployeePayrollJDBCException{
     	EmployeePayrollData[] aarayOfEmps= {
@@ -128,6 +128,5 @@ public class EmployeeJDBCTest
     	System.out.println("Duration With Thread:"+java.time.Duration.between(startThread, endThread));
     	Assert.assertEquals(13,employeePayrollService.countEntries());
     }
-    //UC3
     
 }
