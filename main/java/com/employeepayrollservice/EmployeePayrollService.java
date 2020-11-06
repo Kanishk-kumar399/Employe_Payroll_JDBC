@@ -1,5 +1,6 @@
 package com.employeepayrollservice;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +20,7 @@ private List<EmployeePayrollData> employeePayrollList;
 	}
 	public void updateEmployeeSalary(String name,double salary) throws EmployeePayrollJDBCException
 	{
-		int result=new EmployeePayrollJDBCService().updateEmployeePayrollDataUsingPreparedStatement(name,salary);
+		int result=new EmployeePayrollJDBCService().updateEmployeeDataUsingStatement(name,salary);
 		if(result==0)
 			return;
 		EmployeePayrollData employeePayrollData=this.getEmployeePayrollData(name);
@@ -99,6 +100,33 @@ private List<EmployeePayrollData> employeePayrollList;
 				Thread.sleep(10);
 			}
 			catch(InterruptedException e) {}
+		}
+		System.out.println(this.employeePayrollList);
+	}
+
+	public void updateEmployeesSalary(List<EmployeeSalaryStructure> employeeNameAndSalaryList) {
+		Map<Integer, Boolean> employeeAdditionStatus = new HashMap<>();
+		employeeNameAndSalaryList.forEach(employeeData ->
+		{
+			Runnable task = () -> {
+				employeeAdditionStatus.put(employeeData.hashCode(), false);
+				System.out.println("Salary being updated "+Thread.currentThread().getName());
+				try {
+					this.updateEmployeeSalary(employeeData.name, employeeData.salary);
+				} catch (EmployeePayrollJDBCException e) {
+					e.printStackTrace();
+				}
+				employeeAdditionStatus.put(employeeData.hashCode(), true);
+				System.out.println("Salary Updated: " + Thread.currentThread().getName());
+			};
+			Thread thread = new Thread(task, employeeData.name);
+			thread.start();
+		}
+				);
+		while(employeeAdditionStatus.containsValue(false)) {
+			try {
+				Thread.sleep(100);
+			} catch(InterruptedException e) {}
 		}
 		System.out.println(this.employeePayrollList);
 	}

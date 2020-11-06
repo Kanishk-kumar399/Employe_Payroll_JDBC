@@ -75,14 +75,62 @@ public class EmployeePayrollJDBCService {
 	}
 
 	public int updateEmployeeDataUsingStatement(String name, double salary) throws EmployeePayrollJDBCException {
-		String sql = String.format("update employee_payroll set salary=%.2f where name='%s'", salary, name);
-		try (Connection connection = this.getConnection()) {
-			Statement statement = connection.createStatement();
-			int rowsAffected = statement.executeUpdate(sql);
-			return rowsAffected;
-		} catch (SQLException e) {
-			throw new EmployeePayrollJDBCException("Unable To update data in database");
+		int employeeId = 0, rowsAffected = 0;
+		Connection connection = this.getConnection();
+		try {
+			connection.setAutoCommit(false);
+		} catch (SQLException e2) {
+			throw new EmployeePayrollJDBCException("Error in auto commit");
 		}
+		try (Statement statement = connection.createStatement();){
+			String sql = String.format("update employee_payroll set salary = %.2f where name = '%s';", salary, name);
+			statement.executeUpdate(sql);
+		} catch (SQLException e) {
+			try {
+				connection.rollback();
+			} catch (SQLException e1) {
+				throw new EmployeePayrollJDBCException("Error in updation in employee_payroll");
+			}
+			throw new EmployeePayrollJDBCException("Error in updation");
+		}
+		try(Statement statement = connection.createStatement()){
+			String sql = String.format("select id from employee_payroll"
+					+ " where name = %s", name);
+			ResultSet resultSet = statement.executeQuery(sql);
+			employeeId = resultSet.getInt("id");
+		}
+		catch(SQLException e)
+		{
+			try {
+				connection.rollback();
+			} catch (SQLException e1) {
+				throw new EmployeePayrollJDBCException("Rolling Back");
+			}
+			throw new EmployeePayrollJDBCException("Error in selecting from employee");
+		}
+		try(Statement statement = connection.createStatement()){
+			double deductions = salary * 0.2;
+			double taxablePay = salary - deductions;
+			double tax = taxablePay * 0.1;
+			double netPay = salary - tax;
+			String sql = String.format("update payroll_details set basic_pay = %s,"
+					+ "deductions = %s, taxable_pay = %s, tax = %s, net_pay = %s where employee_id = %s", deductions, taxablePay, tax, netPay, employeeId);
+			rowsAffected = statement.executeUpdate(sql);
+		} catch(SQLException e) {
+			try {
+				connection.rollback();
+			} catch (SQLException e1) {
+				throw new EmployeePayrollJDBCException("Error in updation");
+			}
+			throw new EmployeePayrollJDBCException("Error in getting statement");
+		}
+		try {
+			connection.commit();
+		} catch (SQLException e) {
+
+			throw new EmployeePayrollJDBCException("Error in commiting");
+		}
+		return rowsAffected;
 	}
 
 	public synchronized int updateEmployeePayrollDataUsingPreparedStatement(String name, double salary)

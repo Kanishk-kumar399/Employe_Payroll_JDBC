@@ -128,5 +128,18 @@ public class EmployeeJDBCTest
     	System.out.println("Duration With Thread:"+java.time.Duration.between(startThread, endThread));
     	Assert.assertEquals(13,employeePayrollService.countEntries());
     }
-    
+    //New UC6
+    @Test
+    public void givenEmployees_WhenUpdatedUsingMultiThreading_ShouldSyncWithDB() throws EmployeePayrollJDBCException{
+    	EmployeePayrollService employeePayrollService=new EmployeePayrollService();
+    	employeePayrollService.readEmployeePayrollData();
+		EmployeeSalaryStructure[] array= { 
+				new EmployeeSalaryStructure("Terissa", 2450000.00),
+				new EmployeeSalaryStructure("Bill", 676000.00)};
+		employeePayrollService.updateEmployeesSalary(Arrays.asList(array));
+		boolean resultFirstEmployee = employeePayrollService.checkEmployeePayrollInSyncWithDB("Terissa");
+		boolean resultSecondEmployee = employeePayrollService.checkEmployeePayrollInSyncWithDB("Bill");
+		Assert.assertTrue(resultFirstEmployee);
+		Assert.assertTrue(resultSecondEmployee);
+    }
 }
